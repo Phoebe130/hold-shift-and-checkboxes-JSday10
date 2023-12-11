@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hold Shift to Check Multiple Checkboxes</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+
+<body>
+
+  <!-- 功能：
+  1.用ctrl單選
+  2.用shift區間(起始點～終點）內全部選取 -->
+
+  <!-- 筆記：
+      1.按住 Shift 鍵的目的是實現在兩個選項框之間的所有選項框都被選中的功能。
+      2.為了實現這一點，需要知道按住 Shift 鍵時的兩個關鍵點：
+        起始點（Start）： 按住 Shift 鍵時點擊的第一個 checkbox。
+        終點（End）： 按住 Shift 鍵時點擊的第二個 checkbox。
+      3.正確地紀錄 this 和 lastChecked 是確保程式碼能夠處理這種情境的關鍵。
+ -->
+
+  <style>
+    html {
+      font-family: sans-serif;
+      background: #ffc600;
+    }
+
+    .inbox {
+      max-width: 400px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #F1F1F1;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    input:checked+p {
+      background: #F9F9F9;
+      text-decoration: line-through;
+    }
+
+    input[type="checkbox"] {
+      margin: 20px;
+    }
+
+    p {
+      margin: 0;
+      padding: 20px;
+      transition: background 0.2s;
+      flex: 1;
+      font-family: 'helvetica neue';
+      font-size: 20px;
+      font-weight: 200;
+      border-left: 1px solid #D1E2FF;
+    }
+  </style>
+  <!--
+   The following is a common layout you would see in an email client.
+
+   When a user clicks a checkbox, holds Shift, and then clicks another checkbox a few rows down, all the checkboxes inbetween those two checkboxes should be checked.
+
+  -->
+  <div class="inbox">
+    <div class="item">
+      <input type="checkbox">
+      <p>This is an inbox layout.</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Check one item</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Hold down your Shift key</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Check a lower item</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Everything in between should also be set to checked</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Try to do it without any libraries</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Just regular JavaScript</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Good Luck!</p>
+    </div>
+    <div class="item">
+      <input type="checkbox">
+      <p>Don't forget to tweet your result!</p>
+    </div>
+  </div>
+
+  <script>
+
+    const checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]');
+    console.log(checkboxes);
+
+    // 用來儲存上一次被點到的選項框
+    let lastChecked;
+
+    function handleCheck(e) {
+      // console.log(e);//裡面含有shiftkey、ctrlkey是true、false
+      // lastChecked = this;
+      // console.log(lastChecked); //印出當前打勾的選項
+
+      // 用來判斷選項框是否處於起始點～終點之間
+      let inBetween = false;
+
+      // 檢查是否按住shift 且 選項框已被打勾
+      if (e.shiftKey && this.checked) {
+        // 遍歷每個選項框（檢查誰是第一個誰是最後一個）
+        checkboxes.forEach(checkbox => {
+          console.log(checkbox, checkbox.checked);
+          // 判斷當前選項框 且 是上一次點擊的選項框
+          if (checkbox === this || checkbox === lastChecked) {
+            inBetween = !inBetween; //超過這個區間就不是這個區間
+            console.log("starting to check them inbetween");
+          }
+          // 在區間起始點～終點內的選項要打勾
+          if (inBetween) {
+            checkbox.checked = true;
+          }
+        });
+      }
+    // 如果沒有按著 shift 不放，且同時勾選了 checkbox，記下這次的 checkbox
+      lastChecked = this;
+    }
+
+    // 點擊事件 監聽所有的選項框 
+    checkboxes.forEach(check => check.addEventListener('click', handleCheck))
+
+
+  </script>
+</body>
+
+</html>
